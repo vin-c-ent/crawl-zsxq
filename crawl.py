@@ -23,16 +23,27 @@ num = 0
 def get_data(url):
 
     global htmls, num
-        
+
     headers = {
-        'Authorization': 'DD282FEB-EDD7-A50E-6C94-344947B6E723',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
+        'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0',
+        'Accept':'application/json, text/plain, */*                                                   ',
+        'Accept-Language':'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2                ',
+        'Accept-Encoding':'gzip, deflate, br                                                          ',
+        'X-Request-Id':'82907b544-1692-95f1-1d15-4ef72467968                                          ',
+        'X-Version':'2.4.0                                                                            ',
+        'X-Signature':'406055c21c85e1429b255dc91b98270fd045f7bf                                       ',
+        'X-Timestamp':'1618231526                                                                     ',
+        'Origin':'https://wx.zsxq.com                                                               ',
+        'Connection':'keep-alive                                                                      ',
+        'Referer':'https://wx.zsxq.com/                                                             ',
+        'Cookie':'abtest_env=product; zsxq_access_token=FD8F0E69-4FCB-4130-EE20-0F80D5600E42_15ED2F52F49EA7B4',
+        'TE':'Trailers                                                                                '
     }
-    
+
     rsp = requests.get(url, headers=headers)
     with open('test.json', 'w', encoding='utf-8') as f:        # 将返回数据写入 test.json 方便查看
         f.write(json.dumps(rsp.json(), indent=2, ensure_ascii=False))
-    
+
     with open('test.json', encoding='utf-8') as f:
         for topic in json.loads(f.read()).get('resp_data').get('topics'):
             content = topic.get('question', topic.get('talk', topic.get('task', topic.get('solution'))))
@@ -40,7 +51,7 @@ def get_data(url):
             text = content.get('text', '')
             text = re.sub(r'<[^>]*>', '', text).strip()
             text = text.replace('\n', '<br>')
-            title = str(num) + text[:9]
+            title = str(num) + '. ' + text[:9]
             num += 1
 
             if content.get('images'):
@@ -115,5 +126,5 @@ def make_pdf(htmls):
     print("已制作电子书在当前目录！")
 
 if __name__ == '__main__':
-    start_url = 'https://api.zsxq.com/v1.10/groups/8424258282/topics?scope=digests&count=20'
+    start_url = 'https://api.zsxq.com/v1.10/groups/28518484814451/topics?scope=all&count=20'
     make_pdf(get_data(start_url))
